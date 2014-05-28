@@ -18,6 +18,7 @@ data DrupalNode = DrupalNode
     , changed :: String
     , created :: String
     , name :: String
+    , nid :: String
     , revision_timestamp :: String
     , status :: String
     , title :: String
