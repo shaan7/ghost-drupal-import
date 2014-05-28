@@ -3,6 +3,12 @@
 import           DrupalNode
 import           GhostImport
 import qualified Text.JSON.Generic as JSON
+import qualified Text.Pandoc as Pandoc
+
+writerOptions = Pandoc.def
+readerOptions = Pandoc.def
+htmlToMarkdown :: String -> String
+htmlToMarkdown = Pandoc.writeMarkdown writerOptions . Pandoc.readHtml readerOptions
 
 mapDrupalNodeToGhostImportPost :: DrupalNode.DrupalNode -> GhostImport.GhostImportPost
 mapDrupalNodeToGhostImportPost drupalNode =
@@ -10,7 +16,7 @@ mapDrupalNodeToGhostImportPost drupalNode =
     { GhostImport.id = DrupalNode.nid drupalNode
     , GhostImport.title = DrupalNode.title drupalNode
     , GhostImport.slug = DrupalNode.title drupalNode
-    , GhostImport.markdown = ""
+    , GhostImport.markdown = htmlToMarkdown ( DrupalNode.value ( head (DrupalNode.und ( DrupalNode.body (drupalNode) ) ) ) )
     , GhostImport.html = DrupalNode.value ( head (DrupalNode.und ( DrupalNode.body (drupalNode) ) ) )
     , GhostImport.image = ""
     , GhostImport.featured = True
@@ -43,15 +49,8 @@ constructGhostImportFromGhostImportData ghostImportData =
     , _data_hack = ghostImportData
     }
 
+
+
 main = do
     jsonString <- readFile "/tmp/node.json"
     putStrLn (JSON.encodeJSON (constructGhostImportFromGhostImportData (mapDrupalNodesToGhostImportData (JSON.decodeJSON (jsonString) :: [DrupalNode.DrupalNode]))))
-    --print (mapDrupalNodeToGhostImportPost ( head (JSON.decodeJSON (jsonString) :: [DrupalNode.DrupalNode])))
-
-{- import System.IO
-import Text.JSON
-
-main = do
-    src <- readFile "/tmp/export.json"
-    decode src
--}
