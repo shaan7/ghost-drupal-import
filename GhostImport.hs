@@ -7,7 +7,7 @@ import qualified Text.JSON.Generic as JSON
 
 data GhostImport = GhostImport
     { meta :: GhostImportMeta
-    , datwa :: GhostImportData
+    , _data_hack :: GhostImportData
     } deriving (Show, JSON.Data, JSON.Typeable)
 
 data GhostImportMeta = GhostImportMeta
