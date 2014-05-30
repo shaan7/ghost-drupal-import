@@ -49,8 +49,15 @@ constructGhostImportFromGhostImportData ghostImportData =
     , _data_hack = ghostImportData
     }
 
+convertDrupalNodeJsonToGhostImportDataJson :: String -> String
+convertDrupalNodeJsonToGhostImportDataJson jsonString = JSON.encodeJSON (constructGhostImportFromGhostImportData (mapDrupalNodesToGhostImportData (JSON.decodeJSON (jsonString) :: [DrupalNode.DrupalNode])))
 
+parseDrupalNodeJson :: String -> DrupalNode
+parseDrupalNodeJson drupalNodeJson = JSON.decodeJSON (drupalNodeJson) :: DrupalNode.DrupalNode
+
+parseDrupalNodeJsonList :: [String] -> [DrupalNode.DrupalNode]
+parseDrupalNodeJsonList nodesJsonList = map parseDrupalNodeJson nodesJsonList
 
 main = do
-    jsonString <- readFile "/tmp/node.json"
-    putStrLn (JSON.encodeJSON (constructGhostImportFromGhostImportData (mapDrupalNodesToGhostImportData (JSON.decodeJSON (jsonString) :: [DrupalNode.DrupalNode]))))
+    jsonString <- readFile "/tmp/data_export_import/nodes/20140530_210456_nodes_story.dataset"
+    writeFile "/tmp/out.json" (JSON.encodeJSON (constructGhostImportFromGhostImportData (mapDrupalNodesToGhostImportData (parseDrupalNodeJsonList(lines jsonString)))))
