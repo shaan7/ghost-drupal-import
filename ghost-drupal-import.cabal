@@ -55,4 +55,9 @@ executable ghost-drupal-import
   -- Other library packages from which modules are imported.
   build-depends:       base ==4.6.*,
                        pandoc,
-                       json
+                       json,
+                       aeson ==0.7.0.3,
+                       bytestring,
+                       containers,
+                       unordered-containers,
+                       text

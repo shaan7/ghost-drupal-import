@@ -2,6 +2,7 @@
 
 import           DrupalNode
 import           GhostImport
+import           DrupalTaxonomy
 import qualified Text.JSON.Generic as JSON
 import qualified Text.Pandoc as Pandoc
 
@@ -34,10 +35,12 @@ mapDrupalNodeToGhostImportPost drupalNode =
     , GhostImport.published_by = 1
     }
 
-mapDrupalNodesToGhostImportData :: [DrupalNode.DrupalNode] -> GhostImport.GhostImportData
-mapDrupalNodesToGhostImportData drupalNodes =
+mapDrupalNodesToGhostImportData :: [DrupalNode.DrupalNode] -> [DrupalTaxonomy.Tags] -> GhostImport.GhostImportData
+mapDrupalNodesToGhostImportData drupalNodes drupalTags =
     GhostImport.GhostImportData
-    { GhostImport.posts = map mapDrupalNodeToGhostImportPost drupalNodes }
+    { GhostImport.posts = map mapDrupalNodeToGhostImportPost drupalNodes
+    , GhostImport.tags = drupalTags
+    }
 
 constructGhostImportFromGhostImportData :: GhostImport.GhostImportData -> GhostImport.GhostImport
 constructGhostImportFromGhostImportData ghostImportData =
@@ -49,8 +52,8 @@ constructGhostImportFromGhostImportData ghostImportData =
     , _data_hack = ghostImportData
     }
 
-convertDrupalNodeJsonToGhostImportDataJson :: String -> String
-convertDrupalNodeJsonToGhostImportDataJson jsonString = JSON.encodeJSON (constructGhostImportFromGhostImportData (mapDrupalNodesToGhostImportData (JSON.decodeJSON (jsonString) :: [DrupalNode.DrupalNode])))
+--convertDrupalNodeJsonToGhostImportDataJson :: String -> String
+--convertDrupalNodeJsonToGhostImportDataJson jsonString = JSON.encodeJSON (constructGhostImportFromGhostImportData (mapDrupalNodesToGhostImportData (JSON.decodeJSON (jsonString) :: [DrupalNode.DrupalNode])))
 
 parseDrupalNodeJson :: String -> DrupalNode
 parseDrupalNodeJson drupalNodeJson = JSON.decodeJSON (drupalNodeJson) :: DrupalNode.DrupalNode
@@ -59,5 +62,10 @@ parseDrupalNodeJsonList :: [String] -> [DrupalNode.DrupalNode]
 parseDrupalNodeJsonList nodesJsonList = map parseDrupalNodeJson nodesJsonList
 
 main = do
-    jsonString <- readFile "/tmp/data_export_import/nodes/20140530_210456_nodes_story.dataset"
-    writeFile "/tmp/out.json" (JSON.encodeJSON (constructGhostImportFromGhostImportData (mapDrupalNodesToGhostImportData (parseDrupalNodeJsonList(lines jsonString)))))
+    taxonomyString <- readFile "/tmp/data_export_import/taxonomy_terms/20140530_210113_taxonomy_terms.dataset"
+    nodeJsonString <- readFile "/tmp/data_export_import/nodes/20140530_210456_nodes_story.dataset"
+    --print (foo "{\"foo\": 123}")
+    --print (lookupInValue "name" (lookupInValue "150"( lookupInValue "2" (getVocabulariesObject (foo jsonString)))))
+    let nodesList = parseDrupalNodeJsonList(lines nodeJsonString)
+    let tagsList = DrupalTaxonomy.tagsFromTagJson(taxonomyString)
+    writeFile "/tmp/out.json" (JSON.encodeJSON(constructGhostImportFromGhostImportData(mapDrupalNodesToGhostImportData nodesList tagsList)))

@@ -3,6 +3,7 @@
 module GhostImport
     where
 
+import DrupalTaxonomy
 import qualified Text.JSON.Generic as JSON
 
 data GhostImport = GhostImport
@@ -39,4 +40,5 @@ data GhostImportPost = GhostImportPost
 
 data GhostImportData = GhostImportData
     { posts :: [GhostImportPost]
+    , tags :: [DrupalTaxonomy.Tags]
     } deriving (Show, JSON.Data, JSON.Typeable)
