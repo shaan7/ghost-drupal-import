@@ -14,7 +14,7 @@ htmlToMarkdown = Pandoc.writeMarkdown writerOptions . Pandoc.readHtml readerOpti
 mapDrupalNodeToGhostImportPost :: DrupalNode.DrupalNode -> GhostImport.GhostImportPost
 mapDrupalNodeToGhostImportPost drupalNode =
     GhostImport.GhostImportPost
-    { GhostImport.id = DrupalNode.nid drupalNode
+    { GhostImport.id = read (DrupalNode.nid drupalNode) :: Int
     , GhostImport.title = DrupalNode.title drupalNode
     , GhostImport.slug = DrupalNode.title drupalNode
     , GhostImport.markdown = htmlToMarkdown ( DrupalNode.value ( head (DrupalNode.und ( DrupalNode.body (drupalNode) ) ) ) )
@@ -40,6 +40,7 @@ mapDrupalNodesToGhostImportData drupalNodes drupalTags =
     GhostImport.GhostImportData
     { GhostImport.posts = map mapDrupalNodeToGhostImportPost drupalNodes
     , GhostImport.tags = drupalTags
+    , GhostImport.posts_tags = GhostImport.constructPostsTag drupalNodes
     }
 
 constructGhostImportFromGhostImportData :: GhostImport.GhostImportData -> GhostImport.GhostImport

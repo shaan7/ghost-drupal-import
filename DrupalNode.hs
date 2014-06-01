@@ -3,6 +3,7 @@
 module DrupalNode
     where
 
+import DrupalNodeTaxonomy
 import qualified Text.JSON.Generic as JSON
 
 data DrupalBodyContent = DrupalBodyContent 
@@ -22,4 +23,5 @@ data DrupalNode = DrupalNode
     , revision_timestamp :: String
     , status :: String
     , title :: String
+    , taxonomy_vocabulary_2 :: DrupalNodeTaxonomy.DrupalNodeTaxonomyRelation
     } deriving (Show, JSON.Data, JSON.Typeable)

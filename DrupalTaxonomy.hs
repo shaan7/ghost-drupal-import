@@ -14,7 +14,7 @@ import qualified Data.HashMap.Strict as DHMS
 import qualified Data.Text as DT
 
 data Tags = Tags
-    { id :: String
+    { id :: Int
     , name :: String
     , slug :: String
     , description :: String
@@ -40,7 +40,7 @@ stringFromValue value = getObjectFromResult(Aeson.fromJSON value :: Aeson.Result
 
 tagObject :: Aeson.Value -> Tags
 tagObject value = Tags 
-    { DrupalTaxonomy.id = stringFromValue(lookupInValue "tid" value)
+    { DrupalTaxonomy.id = read (stringFromValue(lookupInValue "tid" value)) :: Int
     , name = stringFromValue(lookupInValue "name" value)
     , slug = stringFromValue(lookupInValue "name" value)
     , description = ""
