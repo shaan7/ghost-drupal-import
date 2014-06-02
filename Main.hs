@@ -17,7 +17,7 @@ mapDrupalNodeToGhostImportPost drupalNode =
     { GhostImport.id = read (DrupalNode.nid drupalNode) :: Int
     , GhostImport.title = DrupalNode.title drupalNode
     , GhostImport.slug = DrupalNode.title drupalNode
-    , GhostImport.markdown = htmlToMarkdown ( DrupalNode.value ( head (DrupalNode.und ( DrupalNode.body (drupalNode) ) ) ) )
+    , GhostImport.markdown = htmlToMarkdown (filter (/='\r') ( DrupalNode.value ( head (DrupalNode.und ( DrupalNode.body (drupalNode) ) ) ) ) )
     , GhostImport.html = DrupalNode.value ( head (DrupalNode.und ( DrupalNode.body (drupalNode) ) ) )
     , GhostImport.image = ""
     , GhostImport.featured = True
@@ -27,11 +27,11 @@ mapDrupalNodeToGhostImportPost drupalNode =
     , GhostImport.meta_title = ""
     , GhostImport.meta_description = ""
     , GhostImport.author_id = 1
-    , GhostImport.created_at = 0
+    , GhostImport.created_at = 1000 * read (DrupalNode.created drupalNode) :: Int
     , GhostImport.created_by = 1
-    , GhostImport.updated_at = 0
+    , GhostImport.updated_at = 1000 * read (DrupalNode.changed drupalNode) :: Int
     , GhostImport.updated_by = 1
-    , GhostImport.published_at = 0
+    , GhostImport.published_at = 1000 * read (DrupalNode.created drupalNode) :: Int
     , GhostImport.published_by = 1
     }
 
